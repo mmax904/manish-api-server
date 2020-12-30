@@ -1,5 +1,24 @@
+const path = require('path');
+const multer = require('multer');
 const mongoose = require('mongoose');
 const requireLogin = require('../middlewares/requireLogin');
+
+const cloudinary = require('../services/cloudinary');
+const bufferToString = require('../services/bufferToString');
+
+const memoryStorage = multer.memoryStorage()
+
+const cloudUpload = multer({
+  storage: memoryStorage,
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname)
+    if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+      return callback('Only images are allowed', null)
+    }
+    callback(null, true)
+  }
+})
+.single('image');
 
 module.exports = app => {
   app.get('/users', (req, res) => {
@@ -12,6 +31,16 @@ module.exports = app => {
 
   app.get('/admins', requireLogin, (req, res) => {
     res.send(admins);
+  });
+
+  app.get('/canvas/upload', requireLogin, cloudUpload, (req, res) => {
+    const imageContent = bufferToString(req.file.originalname,req.file.buffer).content
+    cloudinary.uploader.upload(imageContent, (err, imageResponse) =>{
+      res.status(200).json({
+        data: imageResponse,
+        message: 'uploaded file'
+      });
+    });
   });
 };
 
