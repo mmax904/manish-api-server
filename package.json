@@ -1,0 +1,28 @@
+{
+  "name": "api-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "14.15.3",
+    "npm": "6.14.9"
+  },
+  "scripts": {
+    "start": "forever index.js",
+    "server": "nodemon index.js",
+    "dev": "npm run server"
+  },
+  "author": "Manish Mahant",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "forever": "^3.0.4",
+    "mongoose": "^5.11.9",
+    "nodemon": "^2.0.6",
+    "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0"
+  }
+}
