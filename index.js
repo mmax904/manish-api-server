@@ -1,11 +1,12 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieSession = require('cookie-session');
-const passport = require('passport');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const express = require('express');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
+
 const keys = require('./config/keys');
-require('./models/User');
+
 require('./services/passport');
 
 mongoose.Promise = global.Promise;

@@ -1,9 +1,9 @@
 const path = require('path');
 const multer = require('multer');
-const mongoose = require('mongoose');
-const requireLogin = require('../middlewares/requireLogin');
 
+const Drawing = require('../models/Drawing');
 const cloudinary = require('../services/cloudinary');
+const requireLogin = require('../middlewares/requireLogin');
 const bufferToString = require('../services/bufferToString');
 
 const memoryStorage = multer.memoryStorage()
@@ -33,12 +33,18 @@ module.exports = app => {
     res.send(admins);
   });
 
-  app.get('/canvas/upload', requireLogin, cloudUpload, (req, res) => {
+  app.get('/user/drawings', requireLogin, async (req, res) => {
+    Drawing.find({googleId: req.user.googleId},(err,items) => {
+      res.status(200).json(items);
+    });
+  });
+
+  app.post('/drawing/upload', requireLogin, cloudUpload, async (req, res) => {
     const imageContent = bufferToString(req.file.originalname,req.file.buffer).content
-    cloudinary.uploader.upload(imageContent, (err, imageResponse) =>{
-      res.status(200).json({
-        data: imageResponse,
-        message: 'uploaded file'
+    cloudinary.uploader.upload(imageContent, async (err, imageResponse) => {
+      await new Drawing({ googleId: req.user.googleId, drawingUrl: imageResponse.secure_url}).save();
+      Drawing.find({googleId: req.user.googleId},(merr,items) => {
+        res.status(200).json(items);
       });
     });
   });
